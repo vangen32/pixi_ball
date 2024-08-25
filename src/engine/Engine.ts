@@ -1,7 +1,6 @@
 import {Size} from "../models/Size";
 import {Position} from "../models/Position";
-
-type EngineUpdateHandler = (ballPosition : Position, ballRadius : number, speed : number) => void;
+import {EngineUpdateCallback, StartGameHandler} from "../shared/FunctionTypes";
 
 export class Engine {
     private static engine : Engine;
@@ -14,7 +13,7 @@ export class Engine {
     private _ballPosition : Position = new Position(0, 0);
 
 
-    private onUpdateHandler : EngineUpdateHandler =
+    private onUpdateHandler : EngineUpdateCallback =
         (ballPosition : Position, ballRadius : number) => {};
 
     private constructor() {}
@@ -62,12 +61,12 @@ export class Engine {
         this.onUpdateHandler(this._ballPosition, this.ballRadius, this._speed);
     }
 
-    startGame(fieldSize : Size, ballPosition : Position){
+    startGame : StartGameHandler = (fieldSize : Size, ballPosition : Position) : void => {
         this.initGame(fieldSize, ballPosition)
         this._intervalId = setInterval(this.update.bind(this), 15)
     }
 
-    setEngineUpdateCallBack(callback : EngineUpdateHandler){
+    setEngineUpdateCallBack(callback : EngineUpdateCallback){
         this.onUpdateHandler = callback
     }
 }
