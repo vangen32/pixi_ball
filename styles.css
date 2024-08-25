@@ -1,17 +1,18 @@
 @import "src/styles/css_reset.css";
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: aliceblue;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: aliceblue;
+  padding: 12px;
 }
 
-#pixi-container{
-    width: 50vw;
-    aspect-ratio: 1/1;
-    background-color: #56ff56;
-    overflow : hidden;
-    min-width: 400px;
+#pixi-container {
+  width: 50vw;
+  aspect-ratio: 1/1;
+  /* background-color: #56ff56;*/
+  overflow: hidden;
+  min-width: 400px;
 }
