@@ -11,15 +11,22 @@ export class PixiApp {
   private readonly app: Application;
   private readonly borderWidthCof: number = 0.05;
   private ballPosition: Position = new Position(0, 0);
-  private ballRadius: number = 20;
+  private _ballRadius: number = 20;
   private ballSpeed: number = 0;
   private fieldContainer: Container<any> | undefined;
   private ball?: BallView;
   private onBallClickHandler: StartGameHandler = (fieldSize: Size, ballPosition: Position) => {};
-
   private countersView?: Counters;
+
   get counterContent() {
     return `Speed: ${this.ballSpeed.toFixed(2)}`;
+  }
+  get fieldSize() : Size{
+    return new Size(this.fieldContainer?.width ?? 0, this.fieldContainer?.height ?? 0)
+  }
+
+  set ballRadius(radius : number){
+    this._ballRadius = radius;
   }
 
   private constructor() {
@@ -31,7 +38,7 @@ export class PixiApp {
   }
 
   private async createBall() {
-    (this.ballPosition = new Position(this.fieldContainer!.width / 2, this.fieldContainer!.height / 2)),
+    this.ballPosition = new Position(this.fieldContainer!.width / 2, this.fieldContainer!.height / 2),
       (this.ball = await BallView.GetBallInstance({
         textureUrl: "ball.png",
         position: this.ballPosition,
@@ -47,7 +54,7 @@ export class PixiApp {
     this.fieldContainer?.addChild(this.ball!.ballSprite);
   }
 
-  private async setField(position: Position, size: Size) {
+  private async createField(position: Position, size: Size) {
     this.fieldContainer = new Container({
       position: position,
     });
@@ -71,18 +78,18 @@ export class PixiApp {
     this.ball?.updateBall({
       position: this.ballPosition,
       speed: this.ballSpeed,
-      radius: this.ballRadius,
+      radius: this._ballRadius,
     });
     this.countersView?.updateText(this.counterContent);
   }
 
   public engineUpdateHandler: EngineUpdateCallback = (
     position: Position,
-    radius: number = this.ballRadius,
+    radius: number = this._ballRadius,
     ballSpeed: number
   ): void => {
     this.ballPosition = position;
-    this.ballRadius = radius;
+    this._ballRadius = radius;
     this.ballSpeed = ballSpeed;
   };
 
@@ -98,7 +105,7 @@ export class PixiApp {
     });
     container.appendChild(pixiApp.app.canvas);
 
-    await pixiApp.setField(
+    await pixiApp.createField(
       new Position(container.offsetWidth * pixiApp.borderWidthCof, container.offsetHeight * pixiApp.borderWidthCof),
       new Size(
         container.offsetWidth - container.offsetWidth * pixiApp.borderWidthCof * 2,
@@ -112,5 +119,21 @@ export class PixiApp {
 
   public setBallClickHandler(handler: StartGameHandler): void {
     this.onBallClickHandler = handler;
+  }
+
+  public async onWindowsResize(pixiAppContainer : HTMLElement){
+    this.fieldContainer?.destroy()
+    this.countersView?.textView.destroy()
+    await this.createField(
+      new Position(pixiAppContainer.offsetWidth * this.borderWidthCof,
+        pixiAppContainer.offsetHeight * this.borderWidthCof),
+      new Size(
+        pixiAppContainer.offsetWidth - pixiAppContainer.offsetWidth * this.borderWidthCof * 2,
+        pixiAppContainer.offsetHeight - pixiAppContainer.offsetHeight * this.borderWidthCof * 2
+      )
+    );
+
+    this.createCounters()
+
   }
 }
