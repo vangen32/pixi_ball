@@ -21,11 +21,11 @@ export class PixiApp {
   get counterContent() {
     return `Speed: ${this.ballSpeed.toFixed(2)}`;
   }
-  get fieldSize() : Size{
-    return new Size(this.fieldContainer?.width ?? 0, this.fieldContainer?.height ?? 0)
+  get fieldSize(): Size {
+    return new Size(this.fieldContainer?.width ?? 0, this.fieldContainer?.height ?? 0);
   }
 
-  set ballRadius(radius : number){
+  set ballRadius(radius: number) {
     this._ballRadius = radius;
   }
 
@@ -38,7 +38,7 @@ export class PixiApp {
   }
 
   private async createBall() {
-    this.ballPosition = new Position(this.fieldContainer!.width / 2, this.fieldContainer!.height / 2),
+    (this.ballPosition = new Position(this.fieldContainer!.width / 2, this.fieldContainer!.height / 2)),
       (this.ball = await BallView.GetBallInstance({
         textureUrl: "ball.png",
         position: this.ballPosition,
@@ -121,19 +121,20 @@ export class PixiApp {
     this.onBallClickHandler = handler;
   }
 
-  public async onWindowsResize(pixiAppContainer : HTMLElement){
-    this.fieldContainer?.destroy()
-    this.countersView?.textView.destroy()
+  public async onWindowsResize(pixiAppContainer: HTMLElement) {
+    this.fieldContainer?.destroy();
+    this.countersView?.textView.destroy();
     await this.createField(
-      new Position(pixiAppContainer.offsetWidth * this.borderWidthCof,
-        pixiAppContainer.offsetHeight * this.borderWidthCof),
+      new Position(
+        pixiAppContainer.offsetWidth * this.borderWidthCof,
+        pixiAppContainer.offsetHeight * this.borderWidthCof
+      ),
       new Size(
         pixiAppContainer.offsetWidth - pixiAppContainer.offsetWidth * this.borderWidthCof * 2,
         pixiAppContainer.offsetHeight - pixiAppContainer.offsetHeight * this.borderWidthCof * 2
       )
     );
 
-    this.createCounters()
-
+    this.createCounters();
   }
 }

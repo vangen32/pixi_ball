@@ -10,7 +10,7 @@ export class BallGameController {
     this.configDependencies();
   }
 
-  public updateValues(){
+  public updateValues() {
     this._engine.fieldSize = this._view.fieldSize;
     this._view.ballRadius = this._engine.ballRadius;
   }

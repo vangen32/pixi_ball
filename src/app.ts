@@ -12,6 +12,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.onresize = (e) => {
     controller.updateValues();
     app.onWindowsResize(pixiContainer);
-  }
-
+  };
 });

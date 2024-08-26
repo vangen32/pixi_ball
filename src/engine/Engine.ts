@@ -9,16 +9,16 @@ export class Engine {
   private _speed: number = 0;
   private _velocity: { x: number; y: number } = { x: 0, y: 0 };
   private _ballPosition: Position = new Position(0, 0);
-  private onUpdateHandler: EngineUpdateCallback = (ballPosition, ballRadius, speed  ) => {};
+  private onUpdateHandler: EngineUpdateCallback = (ballPosition, ballRadius, speed) => {};
 
   private constructor() {}
 
-  set fieldSize(size : Size){
+  set fieldSize(size: Size) {
     this._fieldSize = size;
   }
 
-  get ballRadius(){
-    return this._fieldSize.width * 0.03
+  get ballRadius() {
+    return this._fieldSize.width * 0.03;
   }
 
   private initGame(fieldSize: Size, ballPosition: Position) {
@@ -41,7 +41,10 @@ export class Engine {
     this._velocity.x = Math.cos(Math.atan2(this._velocity.y, this._velocity.x)) * this._speed;
     this._velocity.y = Math.sin(Math.atan2(this._velocity.y, this._velocity.x)) * this._speed;
 
-    if (this._ballPosition.x - this.ballRadius <= 0 || this._ballPosition.x + this.ballRadius >= this._fieldSize.width) {
+    if (
+      this._ballPosition.x - this.ballRadius <= 0 ||
+      this._ballPosition.x + this.ballRadius >= this._fieldSize.width
+    ) {
       this._velocity.x *= -1;
       const x = Math.max(this.ballRadius, Math.min(this._ballPosition.x, this._fieldSize.width - this.ballRadius));
       this._ballPosition.update(x, this._ballPosition.y);
