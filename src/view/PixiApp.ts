@@ -3,6 +3,8 @@ import { Size } from "../models/Size";
 import { Position } from "../models/Position";
 import { EngineUpdateCallback, StartGameHandler } from "../shared/SharedTypes";
 import { BallView } from "./BallView";
+import { Counters } from "./Counters";
+import { Colors } from "./styles/Colors";
 
 export class PixiApp {
   private static _pixiApp: PixiApp;
@@ -14,6 +16,11 @@ export class PixiApp {
   private fieldContainer: Container<any> | undefined;
   private ball?: BallView;
   private onBallClickHandler: StartGameHandler = (fieldSize: Size, ballPosition: Position) => {};
+
+  private countersView?: Counters;
+  get counterContent() {
+    return `Speed: ${this.ballSpeed.toFixed(2)}`;
+  }
 
   private constructor() {
     this.app = new Application();
@@ -47,9 +54,17 @@ export class PixiApp {
     this.app.stage.addChild(this.fieldContainer);
     const mask = new Graphics();
     mask.rect(0, 0, size.width, size.height);
-    mask.fill(0x5da9e8);
+    mask.fill(Colors.Field);
     this.fieldContainer.addChild(mask);
     await this.createBall();
+  }
+
+  private createCounters() {
+    this.countersView = new Counters(this.counterContent, this.app.stage.width * this.borderWidthCof - 6);
+
+    this.countersView.textView.y = this.app.stage.height * 0.005;
+    this.countersView.textView.x = this.app.stage.width * this.borderWidthCof;
+    this.app.stage.addChild(this.countersView.textView);
   }
 
   private update() {
@@ -58,6 +73,7 @@ export class PixiApp {
       speed: this.ballSpeed,
       radius: this.ballRadius,
     });
+    this.countersView?.updateText(this.counterContent);
   }
 
   public engineUpdateHandler: EngineUpdateCallback = (
@@ -69,17 +85,17 @@ export class PixiApp {
     this.ballRadius = radius;
     this.ballSpeed = ballSpeed;
   };
+
   public static async InitApp(container: HTMLElement): Promise<PixiApp> {
     if (PixiApp._pixiApp) return PixiApp._pixiApp;
     const pixiApp = new PixiApp();
     pixiApp.setDebugMode();
     await pixiApp.app.init({
-      background: "#1099bb",
+      background: Colors.Frame,
       resizeTo: container,
       width: container.offsetWidth,
       height: container.offsetHeight,
     });
-
     container.appendChild(pixiApp.app.canvas);
 
     await pixiApp.setField(
@@ -89,7 +105,7 @@ export class PixiApp {
         container.offsetHeight - container.offsetHeight * pixiApp.borderWidthCof * 2
       )
     );
-
+    pixiApp.createCounters();
     pixiApp.app.ticker.add(pixiApp.update.bind(pixiApp));
     return pixiApp;
   }
